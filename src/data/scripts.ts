@@ -7,8 +7,9 @@ export const gameScripts: GameScript[] = [
     name: '迷雾古堡探险',
     description: '一座被迷雾笼罩的神秘古堡出现在城市边缘。作为分析员，你与芬妮、里芙组成探险小队，深入调查这个充满未知危险的地方...',
     cover: '/images/scripts/castle.png',
-    author: '官方',
+    author: '落何言',
     version: '1.0.0',
+    isNSFW: false, 
     participantCount: 2,
     openingPrompt: `【第 1 回合】
 
@@ -184,8 +185,9 @@ export const gameScripts: GameScript[] = [
     name: '日常篇 - 咖啡厅的午后',
     description: '难得的休息日，阳光正好，微风不燥。你决定去常去的咖啡厅坐坐，没想到会遇到熟悉的面孔...',
     cover: '/images/scripts/daily-cafe.png',
-    author: '官方',
+    author: '落何言',
     version: '1.0.0',
+    isNSFW: false, 
     participantCount: 2,
     openingPrompt: `【DM】温暖的阳光透过咖啡厅的落地窗洒落，空气中弥漫着咖啡的香气。你推开门走进店内，找了一个靠窗的位置坐下。
 

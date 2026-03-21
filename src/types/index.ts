@@ -96,14 +96,15 @@ export interface GameScript {
   id: string;
   name: string;
   description: string;
-  cover: string; // 封面图，也作为聊天背景
+  cover: string;
   author?: string;
   version?: string;
-  participantCount: number; // 固定参与人数
+  participantCount: number;
+  isNSFW?: boolean; // 添加 NSFW 标记
   openingPrompt: string;
   worldBooks: WorldBook[];
-  items: ItemEntry[]; // 道具设定
-  characters: ScriptCharacter[]; // 固定参与角色
+  items: ItemEntry[];
+  characters: ScriptCharacter[];
   regexScripts: RegexScript[];
 }
 

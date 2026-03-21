@@ -1,5 +1,6 @@
 // AI API 服务
-import { ChatMessage, PlayerSettings, AIRule } from '../types';
+import { ChatMessage, PlayerSettings } from '../types';
+import { getEnabledRulesPrompt } from '../data/aiRules';
 import { characters } from '../data/characters';
 import { gameScripts } from '../data/scripts';
 import { aiRulesConfig } from '../data/aiRules';
@@ -81,10 +82,10 @@ ${char.scriptPersonality ? `- 本剧本特殊设定：${char.scriptPersonality}`
     `- ${item.name}（${item.rarity}）: ${item.description}${item.effect ? ` 效果：${item.effect}` : ''}`
   ).join('\n');
 
-  const globalRules = aiRulesConfig.rules
-    .filter((r: AIRule) => r.enabled)
-    .map((r: AIRule) => `- ${r.prompt}`)
-    .join('\n');
+  const isNSFW = script.isNSFW || false;
+  const globalRules = getEnabledRulesPrompt(isNSFW);
+
+    
 
   return `你是一个跑团游戏的 DM（主持人），同时扮演游戏中的多个 NPC 角色。
 

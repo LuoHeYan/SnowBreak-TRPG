@@ -99,8 +99,8 @@ export const aiRulesConfig: AIRulesConfig = {
       name: '内容适当性',
       description: '根据剧本类型控制内容适当性',
       enabled: true,
-      prompt: '【内容控制】在非NSFW剧本中，禁止任何R18、色情、暴力、血腥等不适内容。在NSFW剧本中，可以包含适当的R18内容，但必须符合角色设定和剧情需要。'
-    },
+      prompt: '【内容控制】在非NSFW剧本中，禁止任何R18、色情、暴力、血腥等不适内容，可以有些擦边的成人要素。在NSFW剧本中，可以包含的R18内容，但必须符合角色设定和剧情需要，且不得包含违反其他规则的内容。'
+},
   ],
   bannedPatterns: [
     '牛头人',
@@ -116,9 +116,18 @@ export const aiRulesConfig: AIRulesConfig = {
 };
 
 // 获取所有启用的规则的 prompt
-export const getEnabledRulesPrompt = (): string => {
+export const getEnabledRulesPrompt = (isNSFW: boolean = false): string => {
   const enabledRules = aiRulesConfig.rules.filter(r => r.enabled);
-  return enabledRules.map(r => r.prompt).join('\n\n');
+  let prompts = enabledRules.map(r => r.prompt);
+  
+  // 根据剧本类型添加额外的内容控制规则
+  if (isNSFW) {
+    prompts.push('【NSFW模式】当前剧本为NSFW模式，可以包含适当的R18内容，但必须符合角色设定和剧情需要，且不得包含违反其他规则的内容。');
+  } else {
+    prompts.push('【非NSFW模式】当前剧本为非NSFW模式，禁止任何R18、色情、暴力、血腥等不适内容。');
+  }
+  
+  return prompts.join('\n\n');
 };
 
 // 检查文本是否包含敏感词
