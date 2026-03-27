@@ -102,7 +102,6 @@ export default function CharactersPage() {
                   <div className="text-xs text-slate-500 mb-1">三围</div>
                   <div className="font-semibold text-slate-800">
                     B{selectedCharacter.measurements.bust} / W{selectedCharacter.measurements.waist} / H{selectedCharacter.measurements.hip}
-                  </div>
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-center">
                     <div className="text-xs text-slate-500 mb-1">代表颜色</div>
                     <div className="flex items-center justify-center gap-2">
