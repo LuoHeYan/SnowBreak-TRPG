@@ -23,6 +23,7 @@ export interface CharacterItem {
 export interface Character {
   id: string;
   name: string;
+   color: string;
   // 基本资料
   height: string;
   birthday: string;

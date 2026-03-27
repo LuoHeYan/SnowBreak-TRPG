@@ -145,6 +145,15 @@ export default function ChatPage() {
     { label: 'D100', expression: '1D100' },
   ];
 
+  // 处理消息内容，为双引号中的文本应用颜色
+  const processMessageContent = (content: string, characterColor: string) => {
+  // 使用正则表达式匹配双引号中的内容
+    const regex = /"([^"]*)"/g;
+    return content.replace(regex, (match, captured) => {
+      return `<span style="color: ${characterColor}; font-weight: 500;">"${captured}"</span>`;
+    });
+};
+
   // 复制消息内容
   const handleCopyMessage = async (messageId: string, content: string) => {
     try {
@@ -370,6 +379,16 @@ export default function ChatPage() {
     return exp ? `/images/expressions/${exp.file}` : null;
   };
 
+  // 获取角色颜色
+  const getCharacterColor = (characterId: string | undefined) => {
+    if (!characterId) return '#64748b'; // 默认颜色
+    if (characterId === 'player') return 'rgb(99, 102, 241)'; // 玩家颜色
+    if (characterId === 'dm') return 'rgb(245, 158, 11)'; // DM 颜色
+    if (characterId === 'system') return '#64748b'; // 系统颜色
+  
+    const char = characters.find(c => c.id === characterId);
+    return char?.color || '#64748b'; // 角色颜色或默认颜色
+};
   // 未开始游戏
   if (!gameState.isPlaying) {
     return (
@@ -469,8 +488,11 @@ export default function ChatPage() {
                     <div className={`flex flex-col ${isDM ? 'max-w-[95%]' : 'max-w-[75%]'} ${isPlayer ? 'items-end' : 'items-start'}`}>
                      {/* 角色名 */}
                      <span className={`text-xs mb-1 px-1 ${
-                       isDM ? 'text-amber-600' : isPlayer ? 'text-indigo-600' : 'text-slate-500'
-                     }`}>
+                       isDM ? 'text-amber-600' : isPlayer ? 'text-indigo-600' : ''
+                     }`} style={{
+   // 只为角色消息应用颜色
+                         color: !isDM && !isPlayer ? getCharacterColor(message.characterId) : undefined
+                       }}>
                        {charInfo.name}
                        {message.expression && (
                          <span className="ml-2 text-slate-400">({message.expression})</span>
@@ -497,8 +519,17 @@ export default function ChatPage() {
                              ? 'bg-gradient-to-br from-indigo-500 to-violet-500 text-white'
                              : 'bg-white/80 backdrop-blur-sm text-slate-700 border border-slate-200/60'
                        }`}>
-                         <div className="whitespace-pre-wrap">{message.content}</div>
+                         <div className="whitespace-pre-wrap"
+                         dangerouslySetInnerHTML={{
+                          __html: !isDM && !isPlayer
+                          ? processMessageContent(message.content, getCharacterColor(message.characterId))
+                          : message.content
+                         }} 
+                         />
+                         </div>
                        </div>
+
+
 
                        {/* 操作按钮 - 悬停时显示 */}
                        <div className={`absolute top-0 ${isPlayer ? 'left-0 -translate-x-full pr-2' : 'right-0 translate-x-full pl-2'} opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1`}>
@@ -749,5 +780,7 @@ export default function ChatPage() {
         </div>
       </div>
     </div>
+
+
   );
 }

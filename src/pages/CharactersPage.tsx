@@ -102,6 +102,19 @@ export default function CharactersPage() {
                   <div className="text-xs text-slate-500 mb-1">三围</div>
                   <div className="font-semibold text-slate-800">
                     B{selectedCharacter.measurements.bust} / W{selectedCharacter.measurements.waist} / H{selectedCharacter.measurements.hip}
+                  // 在基本数据网格中添加颜色显示
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                  <div className="text-xs text-slate-500 mb-1">代表颜色</div>
+                  <div className="flex items-center justify-center gap-2">
+                <div 
+                  className="w-6 h-6 rounded-full border border-slate-300"
+                  style={{ backgroundColor: selectedCharacter.color }}
+                />
+                <span className="font-semibold text-slate-800">
+                  {selectedCharacter.color}
+                </span>
+              </div>
+            </div>
                   </div>
                 </div>
               </div>

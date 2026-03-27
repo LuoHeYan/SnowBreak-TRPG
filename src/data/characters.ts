@@ -7,9 +7,10 @@ export const characters: Character[] = [
     id: 'finney',
     name: '芬妮',
     // 基本资料
-    height: '165cm',
-    birthday: '3月15日',
-    measurements: { bust: 86, waist: 58, hip: 87 },
+    height: '166cm',
+    birthday: '7月30日',
+    measurements: { bust: 77.24, waist: 48.77, hip: 83.11 },
+    color: 'rgb(250, 209, 126)',
     // 图片
     avatar: '/images/avatars/finney.png',
     cover: '/images/covers/finney.png',
@@ -45,9 +46,10 @@ export const characters: Character[] = [
     id: 'liv',
     name: '里芙',
     // 基本资料
-    height: '168cm',
-    birthday: '9月22日',
+    height: '170cm',
+    birthday: '3月21日',
     measurements: { bust: 84, waist: 56, hip: 85 },
+    color: 'rgb(181, 184, 201)',
     // 图片
     avatar: '/images/avatars/liv.png',
     cover: '/images/covers/liv.png',
@@ -92,6 +94,7 @@ export const characters: Character[] = [
     height: '160cm',
     birthday: '12月24日',
     measurements: { bust: 80, waist: 55, hip: 82 },
+    color: 'rgb(244, 236, 249)',
     // 图片
     avatar: '/images/avatars/chenxing.png',
     cover: '/images/covers/chenxing.png',
