@@ -14,34 +14,34 @@ const rollDice = (sides: number): number => {
 const parseDiceExpression = (expression: string): { result: number; details: string } | null => {
   const regex = /^(\d*)D(\d+)([+-]\d+)?$/i;
   const match = expression.trim().toUpperCase().match(regex);
-  
+
   if (!match) return null;
-  
+
   const count = parseInt(match[1] || '1');
   const sides = parseInt(match[2]);
   const modifier = parseInt(match[3] || '0');
-  
+
   if (count < 1 || count > 100 || sides < 2 || sides > 1000) return null;
-  
+
   const rolls: number[] = [];
   for (let i = 0; i < count; i++) {
     rolls.push(rollDice(sides));
   }
-  
+
   const sum = rolls.reduce((a, b) => a + b, 0);
   const total = sum + modifier;
-  
+
   let details = '';
   if (count === 1) {
     details = `D${sides} = ${rolls[0]}`;
   } else {
     details = `${count}D${sides} [${rolls.join(', ')}] = ${sum}`;
   }
-  
+
   if (modifier !== 0) {
     details += ` ${modifier > 0 ? '+' : ''}${modifier} = ${total}`;
   }
-  
+
   return { result: total, details };
 };
 
@@ -121,11 +121,11 @@ export default function ChatPage() {
   const handleSkillCheck = () => {
     const roll = rollDice(100);
     const result = getCOCResult(roll, skillValue);
-    
+
     const diceDetails = `D100 = ${roll} → ${result.type}`;
     // 保存骰子结果，等待玩家发送消息时附加
     setPendingDiceResult(diceDetails);
-    
+
     addMessage({
       type: 'system',
       content: `🎲 ${playerSettings.name || '分析员'} 进行技能检定 (技能值 ${skillValue})：\n${diceDetails}`,
@@ -147,12 +147,12 @@ export default function ChatPage() {
 
   // 处理消息内容，为双引号中的文本应用颜色
   const processMessageContent = (content: string, characterColor: string) => {
-  // 使用正则表达式匹配双引号中的内容
+    // 使用正则表达式匹配双引号中的内容
     const regex = /"([^"]*)"/g;
     return content.replace(regex, (match, captured) => {
       return `<span style="color: ${characterColor}; font-weight: 500;">"${captured}"</span>`;
     });
-};
+  };
 
   // 复制消息内容
   const handleCopyMessage = async (messageId: string, content: string) => {
@@ -181,7 +181,7 @@ export default function ChatPage() {
     if (messageIndex === -1) return;
 
     const targetMessage = gameState.messages[messageIndex];
-    
+
     // 只能重新生成 AI 消息（DM 或角色）
     if (targetMessage.type !== 'dm' && targetMessage.type !== 'character') {
       return;
@@ -225,7 +225,7 @@ export default function ChatPage() {
         gameState.currentScriptId || '',
         gameState.selectedCharacterIds,
         messagesUpToPlayer,
-        playerSettings.enableStreaming 
+        playerSettings.enableStreaming
           ? (chunk) => setStreamingContent(prev => prev + chunk)
           : undefined
       );
@@ -261,7 +261,7 @@ export default function ChatPage() {
 
   const handleSend = async () => {
     if (!input.trim() || !gameState.isPlaying || isLoading) return;
-    
+
     let userMessage = input.trim();
     setInput('');
     setError(null);
@@ -309,7 +309,7 @@ export default function ChatPage() {
         gameState.currentScriptId || '',
         gameState.selectedCharacterIds,
         currentMessages,
-        playerSettings.enableStreaming 
+        playerSettings.enableStreaming
           ? (chunk) => setStreamingContent(prev => prev + chunk)
           : undefined
       );
@@ -385,10 +385,10 @@ export default function ChatPage() {
     if (characterId === 'player') return 'rgb(99, 102, 241)'; // 玩家颜色
     if (characterId === 'dm') return 'rgb(245, 158, 11)'; // DM 颜色
     if (characterId === 'system') return '#64748b'; // 系统颜色
-  
+
     const char = characters.find(c => c.id === characterId);
     return char?.color || '#64748b'; // 角色颜色或默认颜色
-};
+  };
   // 未开始游戏
   if (!gameState.isPlaying) {
     return (
@@ -417,7 +417,7 @@ export default function ChatPage() {
     <div className="h-full flex flex-col relative">
       {/* 背景图 */}
       {playerSettings.useScriptBackground && currentScript?.cover && (
-        <div 
+        <div
           className="absolute inset-0 z-0 opacity-10"
           style={{
             backgroundImage: `url(${currentScript.cover})`,
@@ -458,17 +458,16 @@ export default function ChatPage() {
               ) : (
                 <>
                   {/* 头像 */}
-                  <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                    isDM 
-                      ? 'bg-gradient-to-br from-amber-100 to-orange-100' 
-                      : isPlayer 
+                  <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${isDM
+                      ? 'bg-gradient-to-br from-amber-100 to-orange-100'
+                      : isPlayer
                         ? 'bg-gradient-to-br from-indigo-100 to-violet-100'
                         : 'bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden'
-                  }`}>
+                    }`}>
                     {charInfo.avatar ? (
-                      <img 
-                        src={charInfo.avatar} 
-                        alt={charInfo.name} 
+                      <img
+                        src={charInfo.avatar}
+                        alt={charInfo.name}
                         className="w-full h-full object-cover"
                       />
                     ) : isDM ? (
@@ -485,117 +484,114 @@ export default function ChatPage() {
                   </div>
 
                   {/* 消息内容 */}
-                    <div className={`flex flex-col ${isDM ? 'max-w-[95%]' : 'max-w-[75%]'} ${isPlayer ? 'items-end' : 'items-start'}`}>
-                     {/* 角色名 */}
-                     <span className={`text-xs mb-1 px-1 ${
-                       isDM ? 'text-amber-600' : isPlayer ? 'text-indigo-600' : ''
-                     }`} style={{
-   // 只为角色消息应用颜色
-                         color: !isDM && !isPlayer ? getCharacterColor(message.characterId) : undefined
-                       }}>
-                       {charInfo.name}
-                       {message.expression && (
-                         <span className="ml-2 text-slate-400">({message.expression})</span>
-                       )}
-                     </span>
+                  <div className={`flex flex-col ${isDM ? 'max-w-[95%]' : 'max-w-[75%]'} ${isPlayer ? 'items-end' : 'items-start'}`}>
+                    {/* 角色名 */}
+                    <span className={`text-xs mb-1 px-1 ${isDM ? 'text-amber-600' : isPlayer ? 'text-indigo-600' : ''
+                      }`} style={{
+                        // 只为角色消息应用颜色
+                        color: !isDM && !isPlayer ? getCharacterColor(message.characterId) : undefined
+                      }}>
+                      {charInfo.name}
+                      {message.expression && (
+                        <span className="ml-2 text-slate-400">({message.expression})</span>
+                      )}
+                    </span>
 
-                     {/* 表情图片 */}
-                     {expressionImg && (
-                       <div className="mb-2">
-                         <img 
-                           src={expressionImg} 
-                           alt={message.expression}
-                           className="w-24 h-24 rounded-lg object-cover border border-slate-200"
-                         />
-                       </div>
-                     )}
+                    {/* 表情图片 */}
+                    {expressionImg && (
+                      <div className="mb-2">
+                        <img
+                          src={expressionImg}
+                          alt={message.expression}
+                          className="w-24 h-24 rounded-lg object-cover border border-slate-200"
+                        />
+                      </div>
+                    )}
 
-                     {/* 消息气泡 + 操作按钮 */}
-                     <div className="group relative">
-                       <div className={`px-4 py-3 rounded-2xl leading-relaxed ${
-                         isDM 
-                           ? 'bg-gradient-to-br from-amber-50 to-orange-50 text-slate-700 border border-amber-200/50' 
-                           : isPlayer 
-                             ? 'bg-gradient-to-br from-indigo-500 to-violet-500 text-white'
-                             : 'bg-white/80 backdrop-blur-sm text-slate-700 border border-slate-200/60'
-                       }`}>
-                         <div className="whitespace-pre-wrap"
-                         dangerouslySetInnerHTML={{
-                          __html: !isDM && !isPlayer
-                          ? processMessageContent(message.content, getCharacterColor(message.characterId))
-                          : message.content
-                         }} 
-                         />
-                         </div>
-                       </div>
+                    {/* 消息气泡 + 操作按钮 */}
+                    <div className="group relative">
+                      <div className={`px-4 py-3 rounded-2xl leading-relaxed ${isDM
+                          ? 'bg-gradient-to-br from-amber-50 to-orange-50 text-slate-700 border border-amber-200/50'
+                          : isPlayer
+                            ? 'bg-gradient-to-br from-indigo-500 to-violet-500 text-white'
+                            : 'bg-white/80 backdrop-blur-sm text-slate-700 border border-slate-200/60'
+                        }`}>
+                        <div className="whitespace-pre-wrap"
+                          dangerouslySetInnerHTML={{
+                            __html: !isDM && !isPlayer
+                              ? processMessageContent(message.content, getCharacterColor(message.characterId))
+                              : message.content
+                          }}
+                        />
+                      </div>
+                    </div>
 
 
 
-                       {/* 操作按钮 - 悬停时显示 */}
-                       <div className={`absolute top-0 ${isPlayer ? 'left-0 -translate-x-full pr-2' : 'right-0 translate-x-full pl-2'} opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1`}>
-                         {/* 更多选项按钮 */}
-                         <div className="relative">
-                           <button
-                             onClick={(e) => {
-                               e.stopPropagation();
-                               setActiveMenuId(activeMenuId === message.id ? null : message.id);
-                             }}
-                             className="p-1.5 rounded-lg bg-white/90 border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-white transition-colors shadow-sm"
-                             title="更多选项"
-                           >
-                             <MoreHorizontal size={14} />
-                           </button>
+                    {/* 操作按钮 - 悬停时显示 */}
+                    <div className={`absolute top-0 ${isPlayer ? 'left-0 -translate-x-full pr-2' : 'right-0 translate-x-full pl-2'} opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1`}>
+                      {/* 更多选项按钮 */}
+                      <div className="relative">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveMenuId(activeMenuId === message.id ? null : message.id);
+                          }}
+                          className="p-1.5 rounded-lg bg-white/90 border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-white transition-colors shadow-sm"
+                          title="更多选项"
+                        >
+                          <MoreHorizontal size={14} />
+                        </button>
 
-                           {/* 下拉菜单 */}
-                           {activeMenuId === message.id && (
-                             <div 
-                               className={`absolute top-full mt-1 ${isPlayer ? 'right-0' : 'left-0'} bg-white rounded-lg shadow-lg border border-slate-200 py-1 min-w-[120px] z-50`}
-                               onClick={(e) => e.stopPropagation()}
-                             >
-                               {/* 复制 */}
-                               <button
-                                 onClick={() => handleCopyMessage(message.id, message.content)}
-                                 className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 hover:bg-slate-50 text-slate-600"
-                               >
-                                 {copiedId === message.id ? (
-                                   <>
-                                     <Check size={14} className="text-green-500" />
-                                     <span className="text-green-500">已复制</span>
-                                   </>
-                                 ) : (
-                                   <>
-                                     <Copy size={14} />
-                                     <span>复制</span>
-                                   </>
-                                 )}
-                               </button>
+                        {/* 下拉菜单 */}
+                        {activeMenuId === message.id && (
+                          <div
+                            className={`absolute top-full mt-1 ${isPlayer ? 'right-0' : 'left-0'} bg-white rounded-lg shadow-lg border border-slate-200 py-1 min-w-[120px] z-50`}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {/* 复制 */}
+                            <button
+                              onClick={() => handleCopyMessage(message.id, message.content)}
+                              className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 hover:bg-slate-50 text-slate-600"
+                            >
+                              {copiedId === message.id ? (
+                                <>
+                                  <Check size={14} className="text-green-500" />
+                                  <span className="text-green-500">已复制</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy size={14} />
+                                  <span>复制</span>
+                                </>
+                              )}
+                            </button>
 
-                               {/* 重新生成 - 仅 AI 消息 */}
-                               {(isDM || message.type === 'character') && (
-                                 <button
-                                   onClick={() => handleRegenerate(message.id)}
-                                   disabled={isLoading}
-                                   className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 hover:bg-slate-50 text-slate-600 disabled:opacity-50"
-                                 >
-                                   <RefreshCw size={14} className={regeneratingId === message.id ? 'animate-spin' : ''} />
-                                   <span>重新生成</span>
-                                 </button>
-                               )}
+                            {/* 重新生成 - 仅 AI 消息 */}
+                            {(isDM || message.type === 'character') && (
+                              <button
+                                onClick={() => handleRegenerate(message.id)}
+                                disabled={isLoading}
+                                className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 hover:bg-slate-50 text-slate-600 disabled:opacity-50"
+                              >
+                                <RefreshCw size={14} className={regeneratingId === message.id ? 'animate-spin' : ''} />
+                                <span>重新生成</span>
+                              </button>
+                            )}
 
-                               {/* 删除 */}
-                               <button
-                                 onClick={() => handleDeleteMessage(message.id)}
-                                 className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 hover:bg-red-50 text-red-500"
-                               >
-                                 <Trash2 size={14} />
-                                 <span>删除</span>
-                               </button>
-                             </div>
-                           )}
-                         </div>
-                       </div>
-                     </div>
-                   </div>
+                            {/* 删除 */}
+                            <button
+                              onClick={() => handleDeleteMessage(message.id)}
+                              className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 hover:bg-red-50 text-red-500"
+                            >
+                              <Trash2 size={14} />
+                              <span>删除</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </>
               )}
             </div>
@@ -646,17 +642,16 @@ export default function ChatPage() {
         <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200/40">
           <button
             onClick={() => setShowDicePanel(!showDicePanel)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all ${
-              showDicePanel 
-                ? 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white' 
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all ${showDicePanel
+                ? 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
+              }`}
           >
             <Dices size={14} />
             <span>骰子工具</span>
             {showDicePanel ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           </button>
-          
+
           {/* 快速骰子按钮 - 始终显示 */}
           <div className="flex items-center gap-1">
             {quickDice.slice(0, 4).map((dice) => (
